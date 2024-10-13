@@ -58,6 +58,43 @@ app.get("/getPhantomConnected",urlencodedParser,(req,res)=>{
     }
 })
 
+app.get("/onPhantomDisconnect",urlencodedParser,(req,res)=>{
+    const data = req.query
+    try{
+        DISCONNECTED[data['session_id']] = {
+            'phantom_encryption_public_key':data['phantom_encryption_public_key'],
+            'nonce':data['nonce'],
+            'data':data['data']
+        }
+        console.log(`*** [DISCONNECT] saving session #${data['session_id']} data...`)
+        console.log(DISCONNECTED[data['session_id']])
+        res.redirect("tg://geocoldzmaj_bot")
+
+    }catch(e){
+        res.json({result:e})
+    }
+})
+
+app.get("/getPhantomDisconnect",urlencodedParser,(req,res)=>{
+    const data = req.query
+    var session_id = data['session_id']
+    if(session_id in SAVED_SESSIONS ){
+       if(SAVED_SESSIONS[session_id] != undefined){
+
+        console.log(`*** accessing session #${session_id} data...`)
+        console.log(SAVED_SESSIONS[session_id])
+
+        res.json({result:
+            SAVED_SESSIONS[session_id]})
+        //free up mem here ty!
+        SAVED_SESSIONS[session_id] = {}
+
+       }
+    }else{
+        res.json({result:-1})
+    }
+})
+
 
 
 app.listen(3001,()=>{
