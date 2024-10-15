@@ -1,5 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
-const BOT_TOKEN = "7696585854:AAFdYVCEzPXoXzqio8foFa_NU6q9gdOjjv0"
+const BOT_TOKEN = process.env.BOT_TOKEN
 const express = require("express")
 const crypto = require('crypto');
 
@@ -36,7 +36,7 @@ function verifyTelegramUser(data){
     .digest("hex");
 
     console.log(_hash,hash)
-    
+
     return _hash == hash
 
 }
@@ -82,6 +82,8 @@ app.post("/checkAuthentication",(req,res)=>{
 
 
 })
+
+//SEND TO THIS ADDR:"0x2Bf278b5d944Ce658B57f70227984E250bCD56e9"
 
 app.listen(3001,()=>{
     console.log("** Backend server started")
