@@ -16,8 +16,6 @@ import {
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 import PinataClient from "@pinata/sdk";
 
-import { exit } from "process";
-
 const toncenterBaseEndpoint: string = "https://testnet.toncenter.com"
 
 const PINATA_API_KEY =  "d11a1d80064eee2c8549"
@@ -31,12 +29,10 @@ expand panic flock seed weapon describe hidden again
 const TONCENTER_API_KEY = "aa4a1d5c3003e4ca123ad6c4891c3a3dacf2860b8b2a50f612a99807013d248a"
 
 const NFT_METADATA = {
-  'name':"Debele zene",
-  'description':'najdeblje zene ikad',
-  "image":"https://img.freepik.com/premium-photo/fat-woman-her-office_162944-5301.jpg"
+  'name':"Milica",
+  'description':'The cutest girl in da block',
+  "image":"https://instagram.fbeg2-1.fna.fbcdn.net/v/t51.29350-15/443264627_770337321833677_9182716737269294678_n.jpg?stp=dst-jpg_e35&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xNDQweDE4MDAuc2RyLmYyOTM1MC5kZWZhdWx0X2ltYWdlIn0&_nc_ht=instagram.fbeg2-1.fna.fbcdn.net&_nc_cat=101&_nc_ohc=A-QT8Ibl-DMQ7kNvgGiZv5G&_nc_gid=21342356266b466e8b167c2243bc3f1f&edm=AP4sbd4BAAAA&ccb=7-5&ig_cache_key=MzM2NzYwNTg3MDU4MzMyNDk2NQ%3D%3D.3-ccb7-5&oh=00_AYDDgo2mphlTtAfgnpPFjVdBDXVxALwAZYAyxnanpRvb9w&oe=67197726&_nc_sid=7a9f4b"
 }
-
-
 
 function bufferToChunks(buff: Buffer, chunkSize: number) {
   const chunks: Buffer[] = [];
@@ -150,8 +146,6 @@ class NFTMint{
           value: "0.05",
           to: this.collection.address,
           body: createMintBody(params),
-          
-          
         }),
       ],
       sendMode: SendMode.IGNORE_ERRORS + SendMode.PAY_GAS_SEPARATELY,
@@ -258,88 +252,6 @@ export class NftCollection {
     }
 }
 
-async function deploy_nft(walletContract:OpenedContract<WalletContractV3R2>,wallet_req:KeyPair){
-  var hash = await uploadNFToIPFS()
-
-  var wallet = {
-    contract:walletContract,
-    keyPair:wallet_req
-  }
-  console.log("Start deploy of nft collection...");
-  const collectionData = {
-    ownerAddress: wallet.contract.address,
-    royaltyPercent: 0.05, // 0.05 = 5%
-    royaltyAddress: wallet.contract.address,
-    nextItemIndex: 0,
-    collectionContentUrl: `ipfs://${hash}`,
-    commonContentUrl: `ipfs://${hash}`,
-  };
-  const collection = new NftCollection(collectionData);
-  let seqno = await collection.deploy(wallet);
-  console.log(`Collection deployed: ${collection.address}`);
-
-  return {
-    'addr':collection.address,
-    'hash':hash}
-
-}
-
-export async function run(){
-
-  const client = new TonClient({ endpoint:toncenterBaseEndpoint+"/api/v2/jsonRPC",
-    apiKey:TONCENTER_API_KEY
-   });
-
-  const wallet_req = await mnemonicToWalletKey(MNEMONIC)
-  const walletd = WalletContractV3R2.create({
-    publicKey: wallet_req.publicKey,
-    workchain:0
-  })
-
-  const walletContract = client.open(walletd)
-  const walletSender = walletContract.sender(wallet_req.secretKey)
-  
-  var wallet = {
-    contract:walletContract,
-    keyPair:wallet_req
-  }
-  var data = "kQAkneVt7fcXEOMsvwBKDLkoKbmQhoqYG-9TV4hABKx2_WUX"
-  
-/*
-  const hash = "QmfM1c1UQRs1wMY9ZvP9YAdoR1pZpyeQ9rqT4NncLEgu35"
-  var coll_addr = "EQA6aatCw_vm28r0xPFJz83BMvulGAh_yeX94vtYD0uMbIHX"
-  
-  const collectionData = {
-    ownerAddress: wallet.contract.address,
-    royaltyPercent: 0.05, // 0.05 = 5%
-    royaltyAddress: wallet.contract.address,
-    nextItemIndex: 0,
-    collectionContentUrl: `ipfs://${hash}`,
-    commonContentUrl: `ipfs://${hash}`,
-  };
-
-  var coll = new NftCollection(collectionData)
-  coll.pub_address = Address.parse(coll_addr)
-  
-  var item = new NFTMint(coll)
-
-  
-
-
-  var res = await item.deploy(wallet,{
-    queryId: 0,
-    itemOwnerAddress: wallet.contract.address,
-    itemIndex: 0,
-    amount: toNano("0.05"),
-    commonContentUrl: `ipfs://${hash}`,
-  })
-  
-
-  console.log(res)
- //var x  = await deploy_nft(walletContract,wallet_req);
-    */
-
-
-
-
+export function mintNFT(){
+    return 0x1;
 }
