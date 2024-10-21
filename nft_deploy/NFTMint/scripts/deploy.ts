@@ -11,7 +11,8 @@ import {
   toNano,
   SendMode,
   contractAddress,
-  Address
+  Address,
+  openContract
 } from "ton";
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 import PinataClient from "@pinata/sdk";
@@ -303,17 +304,16 @@ export async function run(){
     contract:walletContract,
     keyPair:wallet_req
   }
-  var data = "kQAkneVt7fcXEOMsvwBKDLkoKbmQhoqYG-9TV4hABKx2_WUX"
-  
-/*
-  const hash = "QmfM1c1UQRs1wMY9ZvP9YAdoR1pZpyeQ9rqT4NncLEgu35"
-  var coll_addr = "EQA6aatCw_vm28r0xPFJz83BMvulGAh_yeX94vtYD0uMbIHX"
+
+
+  const hash = "QmWdWpsZ7Pm4xnKZrpNpLW3by1sC6KCD3EtQdbrXUAQrei"
+  var coll_addr = "kQAkneVt7fcXEOMsvwBKDLkoKbmQhoqYG-9TV4hABKx2_WUX"
   
   const collectionData = {
     ownerAddress: wallet.contract.address,
     royaltyPercent: 0.05, // 0.05 = 5%
     royaltyAddress: wallet.contract.address,
-    nextItemIndex: 0,
+    nextItemIndex: 5,
     collectionContentUrl: `ipfs://${hash}`,
     commonContentUrl: `ipfs://${hash}`,
   };
@@ -329,15 +329,11 @@ export async function run(){
   var res = await item.deploy(wallet,{
     queryId: 0,
     itemOwnerAddress: wallet.contract.address,
-    itemIndex: 0,
+    itemIndex: 4,
     amount: toNano("0.05"),
     commonContentUrl: `ipfs://${hash}`,
   })
   
-
-  console.log(res)
- //var x  = await deploy_nft(walletContract,wallet_req);
-    */
 
 
 

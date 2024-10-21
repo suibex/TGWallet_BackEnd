@@ -1,29 +1,28 @@
-
-const { TonClient, Address } = require('ton');
-const { openContract } = require('ton-core');
-
-
-
+const { TonClient, WalletContractV4, internal }= require("@ton/ton");
+const { mnemonicNew, mnemonicToPrivateKey } =  require("@ton/crypto");
+const { Address } = require("@ton/core");
 const TelegramBot = require('node-telegram-bot-api');
 const BOT_TOKEN = process.env.BOT_TOKEN
 const express = require("express")
+const TonWeb = require("tonweb")
 const crypto = require('crypto');
 var bodyParser = require('body-parser');
-
 const HMAC_SECRET = crypto.createHmac('sha256','WebAppData').update(BOT_TOKEN).digest();
 
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const app = express()
-console.log(BOT_TOKEN)
+console.log("[*] Bot Token:",BOT_TOKEN)
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+/* NOTE: cinjenica da sam ovako lepo leak svaki api key je zabrinjavajuca, ali znam naravno da treba da stoji u dotenv, samo nisam mislio da ces da mi zameris */
+
 const bot = new TelegramBot(BOT_TOKEN,{pooling:false});
-console.log(bot)
-const URL_HOOK = "https://4c24-178-148-213-170.ngrok-free.app"
-const URL = "https://3006-178-148-213-170.ngrok-free.app"
+
+const URL_HOOK = "https://81ac-178-148-213-170.ngrok-free.app"
+const URL = "https://f79e-178-148-213-170.ngrok-free.app"
 
 const PINATA_API_KEY =  "d11a1d80064eee2c8549"
 const PINATA_API_SECRET =  "ea5de5db8fb29f05340c68b914af8cfd1dd98165c0b2a1623c67665be960733c"
@@ -32,23 +31,24 @@ const TONCENTER_API_KEY = "aa4a1d5c3003e4ca123ad6c4891c3a3dacf2860b8b2a50f612a99
 
 
 const client = new TonClient({
-    endpoint: 'https://testnet.toncenter.com/api/v2/jsonRPC', // TON RPC endpoint
-    apiKey:TONCENTER_API_KEY
+    endpoint: 'https://testnet.toncenter.com/api/v2/jsonRPC',
+    apiKey: TONCENTER_API_KEY, // Optional, but note that without api-key you need to send requests once per second, and with 0.25 seconds
   });
 
 
 // Function to fetch minted tokens from a contract
 async function getMintedTokens(contractAddress) {
-    const nftCollectionAddress = Address.parse("kQAkneVt7fcXEOMsvwBKDLkoKbmQhoqYG-9TV4hABKx2_WUX")
-    console.log(nftCollectionAddress)
+    const address = Address.parse("kQAkneVt7fcXEOMsvwBKDLkoKbmQhoqYG-9TV4hABKx2_WUX")
+
     try {
-        const contract = client.open(nftCollectionAddress);
-    
-        return totalSupply;
+        const result = await client.callGetMethod(address, 'get_collection_data');
+        
+        return result.stack.items[0].value
 
     } catch (error) {
         console.error('Error fetching minted NFT indices:', error);
       }
+    return undefined
 }
 
 
@@ -117,7 +117,7 @@ app.post("/getNFTCollectionIdx",async (req,res)=>{
     var idx = await getMintedTokens(data.addr)
     console.log(idx)
     res.send(JSON.stringify({
-        'idx':idx
+        'idx':parseInt(idx)
     }))
 
 })
@@ -134,7 +134,8 @@ app.post("/checkAuthentication",(req,res)=>{
 
 })
 
+
+
 app.listen(3001,()=>{
     console.log("** Backend server started")
 })
-
